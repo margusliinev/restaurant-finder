@@ -1,14 +1,22 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchRestaurants } from '../features/restaurants/restaurantsSlice';
+import { deleteRestaurant, fetchRestaurants } from '../features/restaurants/restaurantsSlice';
 
 const RestaurantList = () => {
     const dispatch = useDispatch();
-    const { restaurants_loading, restaurants_error, restaurants, restaurant } = useSelector((store) => store.restaurants);
+    const { restaurants_loading, restaurants_error, restaurants } = useSelector((store) => store.restaurants);
 
     useEffect(() => {
         dispatch(fetchRestaurants());
-    }, [restaurant]);
+    }, []);
+
+    const handleDelete = (id) => {
+        try {
+            dispatch(deleteRestaurant(id));
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     if (restaurants_loading) {
         return (
@@ -50,7 +58,9 @@ const RestaurantList = () => {
                                         <button className='btn btn-warning'>Update</button>
                                     </td>
                                     <td>
-                                        <button className='btn btn-danger'>Delete</button>
+                                        <button className='btn btn-danger' onClick={() => handleDelete(restaurant.id)}>
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             );

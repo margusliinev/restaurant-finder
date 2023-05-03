@@ -8,7 +8,6 @@ const initialState = {
     restaurant_name: '',
     restaurant_location: '',
     restaurant_price_range: 'Price Range',
-    restaurant: {},
 };
 
 const url = 'http://localhost:3000/api/v1/restaurants';
@@ -25,6 +24,11 @@ const createRestaurant = createAsyncThunk('restaurants/createRestaurant', async 
         price_range: thunkAPI.getState().restaurants.restaurant_price_range,
     });
     return response.data;
+});
+
+const deleteRestaurant = createAsyncThunk('restaurants/deleteRestaurant', async (id) => {
+    await axios.delete(`http://localhost:3000/api/v1/restaurants/${id}`);
+    return id;
 });
 
 const restaurantsSlice = createSlice({
@@ -50,11 +54,16 @@ const restaurantsSlice = createSlice({
                 state.restaurants = action.payload.results.rows;
             })
             .addCase(createRestaurant.fulfilled, (state, action) => {
-                state.restaurant = action.payload.results.rows[0];
+                state.restaurants.push(action.payload.results.rows[0]);
+            })
+            .addCase(deleteRestaurant.fulfilled, (state, action) => {
+                state.restaurants = state.restaurants.filter((restaurant) => {
+                    return restaurant.id !== action.payload;
+                });
             });
     },
 });
 
-export { fetchRestaurants, createRestaurant };
+export { fetchRestaurants, createRestaurant, deleteRestaurant };
 export const { updateInput } = restaurantsSlice.actions;
 export default restaurantsSlice.reducer;

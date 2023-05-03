@@ -29,7 +29,12 @@ const createRestaurant = async (req, res) => {
 
 const updateRestaurant = async (req, res) => {
     try {
-        const results = await db.query('update restaurants set name = $1, location = $2, price_range = $3 where id = $4 returning *', [req.body.name, req.body.location, req.body.price_range, req.params.id]);
+        const results = await db.query('update restaurants set name = $1, location = $2, price_range = $3 where id = $4 returning *', [
+            req.body.name,
+            req.body.location,
+            req.body.price_range,
+            req.params.id,
+        ]);
         res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ msg: error });
