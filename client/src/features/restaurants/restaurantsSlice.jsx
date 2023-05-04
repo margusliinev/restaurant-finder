@@ -8,12 +8,18 @@ const initialState = {
     restaurant_name: '',
     restaurant_location: '',
     restaurant_price_range: 'Price Range',
+    restaurant: {},
 };
 
-const url = 'http://localhost:3000/api/v1/restaurants';
+const url = 'http://localhost:3000/api/v1/restaurants/';
 
 const fetchRestaurants = createAsyncThunk('restaurants/fetchRestaurants', async () => {
     const response = await axios.get(url);
+    return response.data;
+});
+
+const fetchRestaurant = createAsyncThunk('restaurants/fetchRestaurant', async (id) => {
+    const response = await axios.get(`${url}${id}`);
     return response.data;
 });
 
@@ -26,8 +32,17 @@ const createRestaurant = createAsyncThunk('restaurants/createRestaurant', async 
     return response.data;
 });
 
+const updateRestaurant = createAsyncThunk('restaurants/updateRestaurant', async (id, thunkAPI) => {
+    const response = await axios.put(`${url}${id}`, {
+        name: thunkAPI.getState().restaurants.restaurant_name,
+        location: thunkAPI.getState().restaurants.restaurant_location,
+        price_range: thunkAPI.getState().restaurants.restaurant_price_range,
+    });
+    return response.data;
+});
+
 const deleteRestaurant = createAsyncThunk('restaurants/deleteRestaurant', async (id) => {
-    await axios.delete(`http://localhost:3000/api/v1/restaurants/${id}`);
+    await axios.delete(`${url}${id}`);
     return id;
 });
 
@@ -53,6 +68,12 @@ const restaurantsSlice = createSlice({
                 state.restaurants_error = false;
                 state.restaurants = action.payload.results.rows;
             })
+            .addCase(fetchRestaurant.fulfilled, (state, action) => {
+                state.restaurant = action.payload.results.rows[0];
+                state.restaurant_name = state.restaurant.name;
+                state.restaurant_location = state.restaurant.location;
+                state.restaurant_price_range = state.restaurant.price_range;
+            })
             .addCase(createRestaurant.fulfilled, (state, action) => {
                 state.restaurants.push(action.payload.results.rows[0]);
             })
@@ -64,6 +85,6 @@ const restaurantsSlice = createSlice({
     },
 });
 
-export { fetchRestaurants, createRestaurant, deleteRestaurant };
+export { fetchRestaurants, fetchRestaurant, createRestaurant, deleteRestaurant, updateRestaurant };
 export const { updateInput } = restaurantsSlice.actions;
 export default restaurantsSlice.reducer;

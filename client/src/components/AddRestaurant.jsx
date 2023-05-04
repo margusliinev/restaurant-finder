@@ -16,7 +16,7 @@ const AddRestaurant = () => {
     };
 
     return (
-        <form className='container' action=''>
+        <form className='container'>
             <div className='row align-items-center justify-content-center p-3'>
                 <div className='col-md-3'>
                     <input

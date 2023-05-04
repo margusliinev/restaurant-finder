@@ -1,14 +1,24 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteRestaurant, fetchRestaurants } from '../features/restaurants/restaurantsSlice';
 
 const RestaurantList = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { restaurants_loading, restaurants_error, restaurants } = useSelector((store) => store.restaurants);
 
     useEffect(() => {
         dispatch(fetchRestaurants());
     }, []);
+
+    const handleUpdate = (id) => {
+        try {
+            navigate(`/restaurants/${id}/update`);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const handleDelete = (id) => {
         try {
@@ -55,7 +65,9 @@ const RestaurantList = () => {
                                     <td>{restaurant.location}</td>
                                     <td>{'$'.repeat(restaurant.price_range)}</td>
                                     <td>
-                                        <button className='btn btn-warning'>Update</button>
+                                        <button className='btn btn-warning' onClick={() => handleUpdate(restaurant.id)}>
+                                            Update
+                                        </button>
                                     </td>
                                     <td>
                                         <button className='btn btn-danger' onClick={() => handleDelete(restaurant.id)}>
