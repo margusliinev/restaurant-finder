@@ -76,6 +76,9 @@ const restaurantsSlice = createSlice({
             })
             .addCase(createRestaurant.fulfilled, (state, action) => {
                 state.restaurants.push(action.payload.results.rows[0]);
+                state.restaurant_name = '';
+                state.restaurant_location = '';
+                state.price_range = 'Price Range';
             })
             .addCase(deleteRestaurant.fulfilled, (state, action) => {
                 state.restaurants = state.restaurants.filter((restaurant) => {
